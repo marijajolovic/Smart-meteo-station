@@ -1,0 +1,32 @@
+const express = require('express');
+const router = express.Router();
+const db = require('../db');
+
+// Update senzora
+router.put('/:id', (req, res) => {
+  const { status, naziv } = req.body;
+  db.run("UPDATE Senzor SET status = ?, naziv = ? WHERE id = ?",
+    [status, naziv, req.params.id],
+    function(err) {
+      if (err) return res.status(500).json({ error: err.message });
+      res.json({ changed: this.changes });
+    });
+});
+
+// Uključi sve
+router.put('/ukljuci', (req, res) => {
+  db.run("UPDATE Senzor SET status = 'aktivan'", [], function(err) {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json({ changed: this.changes });
+  });
+});
+
+// Isključi sve
+router.put('/iskljuci', (req, res) => {
+  db.run("UPDATE Senzor SET status = 'neaktivan'", [], function(err) {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json({ changed: this.changes });
+  });
+});
+
+module.exports = router;
