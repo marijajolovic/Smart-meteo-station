@@ -1,0 +1,35 @@
+.video-background {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.bg-video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;   /* video popunjava ekran bez deformacije */
+    z-index: -1;         /* ide iza sadržaja */
+}
+
+.center-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    color: #D9E9CF;  
+    text-align: center;
+}
+
+::ng-deep .p-button{
+    background-color: #D9E9CF;
+    color: #19183B;
+    border: none;
+}
