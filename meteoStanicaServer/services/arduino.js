@@ -33,4 +33,13 @@ function sendInterval(interval) {
   });
 }
 
+function sendToArduino(data) {
+  const json = JSON.stringify(data);
+  port.write(json + '\n', (err) => {
+    if (err) console.error("Greška pri slanju Arduinu:", err.message);
+    else console.log("Poslato Arduinu:", json);
+  });
+}
+
+
 module.exports = { setupArduino, sendInterval };

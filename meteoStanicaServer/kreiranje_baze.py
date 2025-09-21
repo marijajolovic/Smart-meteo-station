@@ -34,8 +34,8 @@ CREATE TABLE IF NOT EXISTS Merenja (
 """)
 
 # 3) Ubacivanje test podataka
-c.execute("INSERT INTO Senzor (status, naziv) VALUES (?, ?)", ("aktivan", "Temperaturni senzor"))
-c.execute("INSERT INTO Senzor (status, naziv) VALUES (?, ?)", ("neaktivan", "Vlažnost vazduha"))
+c.execute("INSERT INTO Senzor (status, naziv) VALUES (?, ?)", ("ON", "Temperaturni senzor"))
+c.execute("INSERT INTO Senzor (status, naziv) VALUES (?, ?)", ("OFF", "Vlažnost vazduha"))
 
 c.execute("INSERT INTO Velicina (jedinica, naziv) VALUES (?, ?)", ("°C", "Temperatura"))
 c.execute("INSERT INTO Velicina (jedinica, naziv) VALUES (?, ?)", ("%", "Vlažnost"))

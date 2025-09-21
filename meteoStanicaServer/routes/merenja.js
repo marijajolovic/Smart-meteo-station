@@ -34,4 +34,29 @@ router.post('/', (req, res) => {
     });
 });
 
+// Poslednja dva merenja za svaki senzor
+router.get('/last-two', (req, res) => {
+  db.all(`
+    SELECT s.naziv AS senzor_naziv, m.vrednost, m.timestamp
+    FROM Merenja m
+    JOIN Senzor s ON m.senzor_id = s.id
+    ORDER BY s.id, m.timestamp DESC
+  `, [], (err, rows) => {
+    if (err) return res.status(500).json({ error: err.message });
+
+    const result = {};
+    rows.forEach(row => {
+      if (!result[row.senzor_naziv]) {
+        result[row.senzor_naziv] = [];
+      }
+      // dodaj vrednost dok ne skupimo 2 po senzoru
+      if (result[row.senzor_naziv].length < 2) {
+        result[row.senzor_naziv].push(row.vrednost);
+      }
+    });
+
+    res.json(result);
+  });
+});
+
 module.exports = router;
