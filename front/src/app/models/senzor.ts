@@ -1,5 +1,5 @@
 export interface Senzor{
     id: Number,
-    name: String,
+    naziv: String,
     status: String
 }

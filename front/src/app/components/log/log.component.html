@@ -4,7 +4,7 @@
         [value]="merenje" 
         styleClass="p-datatable-striped" 
         [tableStyle]="{'min-width': '50rem'}"
-        [globalFilterFields]="['velicina.name', 'senzor.name', 'vrednost', 'date']"
+        [globalFilterFields]="['velicina', 'senzor', 'vrednost', 'timestemp']"
     >
         <ng-template pTemplate="caption">
         <div class="flex">
@@ -31,10 +31,10 @@
             </ng-template>
             <ng-template pTemplate="body" let-m>
                 <tr>
-                    <td>{{m.velicina.name}}</td>
-                    <td>{{m.senzor.name}}</td>
+                    <td>{{m.velicina_naziv}}</td>
+                    <td>{{m.senzor_naziv}}</td>
                     <td>{{m.vrednost}}</td>
-                    <td>{{m.date}}</td>
+                    <td>{{m.timestamp}}</td>
                 </tr>
             </ng-template>
     </p-table>

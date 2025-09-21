@@ -6,79 +6,35 @@ import { Merenje } from '../../models/merenje';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputIconModule } from 'primeng/inputicon';
+import { MeteoService } from '../../meteo.service';
+import { HttpClientModule } from '@angular/common/http';
 
 @Component({
   selector: 'app-log',
   standalone: true,
-  imports: [TableModule, CommonModule, ButtonModule,  IconFieldModule, InputTextModule, InputIconModule],
+  imports: [TableModule, CommonModule, ButtonModule,  IconFieldModule, InputTextModule, InputIconModule, HttpClientModule],
+  providers: [MeteoService],
   templateUrl: './log.component.html',
   styleUrl: './log.component.scss'
 })
 export class LogComponent {
-merenje: Merenje[]=[
-    {
-      id: 1,
-      senzor: {
-        id: 1,
-        name: 'LM35',
-        status: 'On'
+  merenje!: Merenje[];
+  
+
+  ngOnInit(): void {
+    this.ucitajMerenja();
+  }
+
+  constructor(private merenjaService: MeteoService){}
+
+  ucitajMerenja(): void {
+    this.merenjaService.getMerenja().subscribe({
+      next: (data) => {
+        this.merenje = data;
       },
-      velicina: {
-        id: 1,
-        jedinica: 'C',
-        name: 'Temperatura'
-        
-      },
-      vrednost: 20,
-      date: '10-02-2024',
-    },
-    {
-      id: 1,
-      senzor: {
-        id: 1,
-        name: 'LM35',
-        status: 'On'
-      },
-      velicina: {
-        id: 1,
-        jedinica: 'C',
-        name: 'Temperatura'
-        
-      },
-      vrednost: 20,
-      date: '10-02-2024',
-    },
-    {
-      id: 1,
-      senzor: {
-        id: 1,
-        name: 'LM35',
-        status: 'On'
-      },
-      velicina: {
-        id: 1,
-        jedinica: 'C',
-        name: 'Temperatura'
-        
-      },
-      vrednost: 20,
-      date: '10-02-2024',
-    },
-    {
-      id: 1,
-      senzor: {
-        id: 1,
-        name: 'LM35',
-        status: 'On'
-      },
-      velicina: {
-        id: 1,
-        jedinica: 'C',
-        name: 'Temperatura'
-        
-      },
-      vrednost: 20,
-      date: '10-02-2024',
-    }
-  ];
+      error: (err) => {
+        console.error('Greška pri učitavanju senzora:', err);
+      }
+    });
+  }
 }

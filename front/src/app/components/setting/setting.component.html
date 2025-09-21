@@ -28,11 +28,16 @@
             </ng-template>
             <ng-template pTemplate="body" let-s>
                 <tr>
-                    <td>{{s.name}}</td>
-                    <td [style.color]="s.status === 'On' ? 'green' : 'red'">
+                    <td>{{s.naziv}}</td>
+                    <td [style.color]="s.status === 'ON' ? 'green' : 'red'">
                         {{s.status}}
                     </td>
-                    <td><p-button [label]="s.status === 'On' ? 'Off' : 'On'" [severity]="s.status === 'On' ? 'danger' : 'success'" icon="pi pi-power-off" /></td>
+                    <td><p-button 
+                        [label]="s.status === 'ON' ? 'OFF' : 'ON'" 
+                        [severity]="s.status === 'ON' ? 'danger' : 'success'" 
+                        icon="pi pi-power-off"
+                        (onClick)="toggleSenzor(s)" />
+                    </td>
                 </tr>
             </ng-template>
     </p-table>
