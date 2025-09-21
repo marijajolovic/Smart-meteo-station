@@ -18,7 +18,7 @@ router.put('/interval', (req, res) => {
 
   db.run("UPDATE Podesavanja SET vrednost = ? WHERE kljuc = 'interval'", [interval], function(err) {
     if (err) return res.status(500).json({ error: err.message });
-    sendInterval(interval);
+    sendToArduino({ ["interval"]: interval });
     res.json({ changed: this.changes });
   });
 });
