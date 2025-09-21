@@ -2,13 +2,13 @@ const { SerialPort } = require('serialport');
 const { ReadlineParser } = require('@serialport/parser-readline');
 const db = require('../db');
 
-const port = new SerialPort({ path: 'COM9', baudRate: 9600 });
+const port = new SerialPort({ path: 'COM4', baudRate: 9600 });
 const parser = port.pipe(new ReadlineParser({ delimiter: '\r\n' }));
 
 const senzorVelicinaMap = {
   "Water level sensor": "Nivo vode",
   "DHT11": "Vlaznost",
-  "TMP36": "Temperatura",
+  "LM35": "Temperatura",
   "BMP180": "Pritisak",
   "LDR": "Svetlost",     // 1 = Dan, 0 = Noc
   "GY61": "Ubrzanje"     // akcelerometar, m/s²
@@ -77,7 +77,7 @@ function setupArduino(io) {
         console.error("Greška pri dohvatanju poslednjih merenja:", err.message);
       } else {
         // Emituj ceo niz poslednjih merenja ka klijentima
-        //console.log(rows)
+        console.log(rows)
         io.emit('arduino-data', rows);
       }
     });

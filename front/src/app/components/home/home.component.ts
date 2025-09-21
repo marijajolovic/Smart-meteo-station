@@ -49,6 +49,7 @@ export class HomeComponent {
       next: (data) => {
         
         this.merenje = data;
+        console.log(this.merenje);
         
         
       },

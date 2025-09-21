@@ -12,29 +12,50 @@ const int xPin = A2;
 const int yPin = A3;
 const int buzzPin = 9;
 
-const int RPin = 5;
-const int GPin = 6;
-const int BPin = 7;
+bool temperatureSensorOn = false;
+bool humiditySensorOn = false;
+bool pressureSensorOn = false;
+bool waterLevelSensorOn = false;
+bool windSensorOn = false;
+bool dayNightSensorOn = false;
 
-bool temperatureSensorOn = true;
-bool humiditySensorOn = true;
-bool pressureSensorOn = true;
-bool waterLevelSensorOn = true;
-bool windSensorOn = true;
-bool dayNightSensorOn = true;
-
-int samplingInteraval = 10000;
+int samplingInteraval = 3000;
 
 String zaSlanje = "";
 
 
 unsigned long lastSampleTime = 0;
 
-void turnOnBeep() {
-    tone(buzzPin, 2000);
-    delay(5000);
-    noTone(buzzPin);
-    delay(1000);
+unsigned long beepStartTime = 0;
+bool beeping = false;
+
+
+void turnOnBeep() 
+{
+  tone(buzzPin, 2000); // glavni ton
+  delay(200);
+  noTone(buzzPin);
+  delay(50);
+
+  tone(buzzPin, 1800);
+  delay(150);
+  noTone(buzzPin);
+  delay(50);
+
+  tone(buzzPin, 2200);
+  delay(150);
+  noTone(buzzPin);
+  delay(50);
+
+  tone(buzzPin, 2500); // nagli skok
+  delay(300);
+  noTone(buzzPin);
+  delay(100);
+
+  tone(buzzPin, 2000); // vraćanje na glavni ton
+  delay(400);
+  noTone(buzzPin);
+  delay(500); // pauza pre ponavljanja
 }
 
 
@@ -45,7 +66,7 @@ void turnSensorOnOf(String str) {
         String state = str.substring(colonIndex + 1);
         state.replace("\n", "");
 
-        if(sensorName == "TMP36")
+        if(sensorName == "LM35")
             state == "ON" ? temperatureSensorOn = true : temperatureSensorOn = false;
         if(sensorName == "DHT11")
             state == "ON" ? humiditySensorOn = true : humiditySensorOn = false;
@@ -71,7 +92,6 @@ void turnSensorOnOf(String str) {
 }
 
 void setup() {
-    Serial.setTimeout(2000);
     Serial.begin(9600);
     pinMode(ldrPin, INPUT);
     pinMode(buzzPin, OUTPUT);
@@ -110,6 +130,10 @@ void loop() {
 
         if(waterLevelSensorOn) {
             int waterLevel = analogRead(waterSensorPin);
+
+            if(waterLevel > 400) {
+                turnOnBeep();
+            }
             zaSlanje += "\"Water level sensor\":" + String(waterLevel) + ",";
         }
 
@@ -117,7 +141,7 @@ void loop() {
             int raw = analogRead(temperaturePin);
             float voltage = raw * (5.0 / 1023.0);
             float temperatureC = voltage * 100.0;
-            zaSlanje += "\"TMP36\":" + String(temperatureC) + ",";
+            zaSlanje += "\"LM35\":" + String(temperatureC) + ",";
         }
 
         if(pressureSensorOn) {
