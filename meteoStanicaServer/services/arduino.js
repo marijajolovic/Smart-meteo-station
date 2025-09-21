@@ -97,4 +97,4 @@ function sendToArduino(data) {
 }
 
 
-module.exports = { setupArduino, sendInterval };
+module.exports = { setupArduino, sendInterval, sendToArduino };

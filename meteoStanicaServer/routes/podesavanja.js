@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../db');
-const { sendInterval } = require('../services/arduino');
+const { sendToArduino } = require('../services/arduino');
 
 // Vrati interval
 router.get('/interval', (req, res) => {
