@@ -2,7 +2,7 @@ const { SerialPort } = require('serialport');
 const { ReadlineParser } = require('@serialport/parser-readline');
 const db = require('../db');
 
-const port = new SerialPort({ path: 'COM8', baudRate: 9600 });
+const port = new SerialPort({ path: 'COM9', baudRate: 9600 });
 const parser = port.pipe(new ReadlineParser({ delimiter: '\r\n' }));
 
 const senzorVelicinaMap = {
@@ -17,53 +17,76 @@ const senzorVelicinaMap = {
 
 function setupArduino(io) {
   parser.on('data', (data) => {
-    console.log('Poruka sa Arduina:', data);
-    io.emit('arduino-data', data);
-    try {
-      const parsed = JSON.parse(data); 
-      // parsed može biti { "Temperatura": 23.5 } ili { "Vlaznost": 60 }
+  console.log('Poruka sa Arduina:', data);
 
-      console.log("Primljeno merenje:", parsed);
+  // Emit raw data ako želiš
+  //io.emit('arduino-data', data);
 
-      for (const imeSenzora of Object.keys(parsed)) {
+  try {
+    const parsed = JSON.parse(data);
 
-        const vrednost = parsed[imeSenzora];
-        const imeVelicine = senzorVelicinaMap[imeSenzora];
+    for (const imeSenzora of Object.keys(parsed)) {
+      const vrednost = parsed[imeSenzora];
+      const imeVelicine = senzorVelicinaMap[imeSenzora];
 
-        console.log(`Primljeno: ${imeSenzora} = ${vrednost}`);
-      
-        if (!imeVelicine) {
-          console.error("Nepoznat senzor:", imeSenzora);
-          return;
-        }
+      if (!imeVelicine) {
+        console.error("Nepoznat senzor:", imeSenzora);
+        return;
+      }
 
-
-        // Upis u bazu
-        db.run(
-          `INSERT INTO Merenja (senzor_id, velicina_id, vrednost) 
-          VALUES (
-            (SELECT id FROM Senzor WHERE naziv = ?),
-            (SELECT id FROM Velicina WHERE naziv = ?),
-            ?
-          )`,
-          [imeSenzora, imeVelicine, vrednost],
-          function(err) {
-            if (err) {
-              console.error("Greška pri upisu u bazu:", err.message);
-            } else {
-              console.log("Merenje upisano u bazu, id:", this.lastID);
-            }
+      // Upis u bazu
+      db.run(
+        `INSERT INTO Merenja (senzor_id, velicina_id, vrednost) 
+        VALUES (
+          (SELECT id FROM Senzor WHERE naziv = ?),
+          (SELECT id FROM Velicina WHERE naziv = ?),
+          ?
+        )`,
+        [imeSenzora, imeVelicine, vrednost],
+        function(err) {
+          if (err) {
+            console.error("Greška pri upisu u bazu:", err.message);
+          } else {
+            console.log("Merenje upisano u bazu, id:", this.lastID);
           }
-        );
+        }
+      );
+    }
+    // Nakon upisa, dohvati poslednja merenja svih senzora i emituj
+    const sql = `
+      SELECT m.id, 
+              s.naziv AS senzor_naziv, 
+              v.naziv AS velicina_naziv, 
+              v.jedinica,
+              m.vrednost, 
+              s.status
+      FROM Merenja m
+      JOIN Senzor s ON m.senzor_id = s.id
+      JOIN Velicina v ON m.velicina_id = v.id
+      INNER JOIN (
+        SELECT senzor_id, MAX(timestamp) AS max_time
+        FROM Merenja
+        GROUP BY senzor_id
+      ) latest
+      ON m.senzor_id = latest.senzor_id AND m.timestamp = latest.max_time
+      ORDER BY s.naziv
+    `;
 
-        // Emituj klijentima u realnom vremenu
-        io.emit('novo-merenje', { imeSenzora, vrednost });
+    db.all(sql, [], (err, rows) => {
+      if (err) {
+        console.error("Greška pri dohvatanju poslednjih merenja:", err.message);
+      } else {
+        // Emituj ceo niz poslednjih merenja ka klijentima
+        //console.log(rows)
+        io.emit('arduino-data', rows);
       }
-      } catch (e) {
-        console.error("Greška pri parsiranju JSON-a:", e.message, "Data:", data);
-      }
-    
-  });
+    });
+
+  } catch (e) {
+    console.error("Greška pri parsiranju JSON-a:", e.message, "Data:", data);
+  }
+});
+
 
 
   port.on('open', () => {

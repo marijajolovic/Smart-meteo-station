@@ -7,21 +7,23 @@ import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
 import { MeteoService } from '../../meteo.service';
 import { HttpClientModule } from '@angular/common/http';
+import { RealtimedataService } from '../../realtimedata.service';
+import { InputNumberModule } from 'primeng/inputnumber';
 
 @Component({
   selector: 'app-setting',
   standalone: true,
-  imports: [FormsModule, InputTextModule, TableModule, CommonModule, ButtonModule, HttpClientModule],
-  providers: [MeteoService],
+  imports: [FormsModule, InputTextModule, TableModule, CommonModule, ButtonModule, HttpClientModule, InputNumberModule],
+  providers: [MeteoService, ],
   templateUrl: './setting.component.html',
   styleUrl: './setting.component.scss'
 })
 export class SettingComponent {
-  valueTimeSample !: String;
+  valueTimeSample !: Number;
   constructor(private senzorService: MeteoService){}
   ngOnInit(): void {
     this.ucitajSenzore();
-    
+    this.valueTimeSample;
   }
   senzori!: Senzor[];
 
@@ -38,13 +40,25 @@ export class SettingComponent {
 
     toggleSenzor(s: any): void {
     const newStatus = s.status === 'ON' ? 'OFF' : 'ON';
-    this.senzorService.updateSenzor(s.id, { naziv: s.naziv, status: newStatus }).subscribe({
+    this.senzorService.updateSenzor(s.id, {status: newStatus }).subscribe({
       next: () => {
         s.status = newStatus;
-        window.location.reload();
+        //window.location.reload();
       },
       error: (err) => console.error('Greška pri gašenju/paljenju senzora:', err)
     });
+  }
+  
+  promeniVreme() {
+    if (this.valueTimeSample != null) {
+      this.senzorService.updateInterval(this.valueTimeSample).subscribe({
+      next: () => {
+      },
+      error: (err) => console.error('Greška pri gašenju/paljenju senzora:', err)
+    });
+    } else {
+      console.warn('Unesi vrednost vremena uzorkovanja!');
+    }
   }
 
 }

@@ -1,16 +1,12 @@
-<div class="card">
-    <div class="flex flex-column gap-2">
-        <label for="username">Unesi vreme perioda uzorkovanja</label><br>
-        <input 
-            pInputText
-            id="username" 
-            aria-describedby="username-help" 
-            [(ngModel)]="valueTimeSample" /><br>
-        <small id="username-help">
-            vreme unesite u s
-        </small>
-    </div>
-</div>
+<p>Unesi vreme u s na koliko da uzorukuju senzori</p><br>
+<p-inputNumber 
+    inputId="integeronly" 
+    [(ngModel)]="valueTimeSample" /> 
+<br>
+<p-button 
+    label="Prihvati" 
+    (onClick)="promeniVreme()">
+</p-button>
 
 <div class="card">
     <p-table 
@@ -32,7 +28,7 @@
                     <td [style.color]="s.status === 'ON' ? 'green' : 'red'">
                         {{s.status}}
                     </td>
-                    <td><p-button 
+                    <td><p-button
                         [label]="s.status === 'ON' ? 'OFF' : 'ON'" 
                         [severity]="s.status === 'ON' ? 'danger' : 'success'" 
                         icon="pi pi-power-off"

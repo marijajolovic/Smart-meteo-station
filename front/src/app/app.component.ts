@@ -7,11 +7,13 @@ import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { MenuItem } from 'primeng/api';
 import { MenubarModule } from 'primeng/menubar';
 import { filter } from 'rxjs/operators';
+import { MeteoService } from './meteo.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
   imports: [RouterOutlet, MenubarModule, FormsModule, CommonModule, HttpClientModule],
+  providers: [MeteoService],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
@@ -19,7 +21,7 @@ export class AppComponent {
   title = 'meteo';
    items: MenuItem[] | undefined;
    currentUrl: string = '';
-   constructor(public router: Router) {
+   constructor(public router: Router, private senzorService: MeteoService) {
     this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe((event: any) => {
@@ -51,7 +53,13 @@ export class AppComponent {
         ]
     }
     iskljuci() {
-        this.router.navigate(['/welcome']);
+        this.senzorService.iskljuciAllSenzor().subscribe({
+        next: () => {
+            this.router.navigate(['/welcome']);
+        },
+        error: (err) => console.error('Greška pri gašenju/paljenju senzora:', err)
+        });
+        
     }
 
 }

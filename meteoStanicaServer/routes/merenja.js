@@ -9,7 +9,7 @@ router.get('/', (req, res) => {
           FROM Merenja m
           JOIN Senzor s ON m.senzor_id = s.id
           JOIN Velicina v ON m.velicina_id = v.id
-          ORDER BY m.timestamp DESC`, [], (err, rows) => {
+          ORDER BY m.timestamp DESC LIMIT 500`, [], (err, rows) => {
     if (err) return res.status(500).json({ error: err.message });
     res.json(rows);
   });

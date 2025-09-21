@@ -10,59 +10,47 @@ import { InputTextModule } from 'primeng/inputtext';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { MeteoService } from '../../meteo.service';
+import { RealtimedataService } from '../../realtimedata.service';
+import { FormsModule } from "@angular/forms";
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [TableModule, CommonModule, ButtonModule, IconFieldModule, InputTextModule, InputIconModule, DropdownModule, HttpClientModule],
-  providers: [MeteoService],
+  imports: [TableModule, CommonModule, ButtonModule, IconFieldModule, InputTextModule, InputIconModule, DropdownModule, HttpClientModule, FormsModule],
+  providers: [MeteoService, RealtimedataService],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
 export class HomeComponent {
     currentWeather : String = 'storm';
-    merenje!: MerenjeNajnovije [];
+    merenje!: MerenjeNajnovije[];
     merenjeRazlike!: MerenjeRazlika [];
     temp!: MerenjeNajnovije;
     vlaznost !: MerenjeNajnovije;
     vetar!:MerenjeNajnovije;
   
     tempT !: MerenjeRazlika;
-    constructor(private merenjaService: MeteoService){}
+    constructor(private merenjaService: MeteoService, private serviceRealTime: RealtimedataService){}
     ngOnInit(): void {
-      this.temp = {id: 0, senzor_naziv: 'LM35', velicina_naziv: '', vrednost: 0, jedinica: '°C', status: ''};
-      this.vlaznost = {id: 0, senzor_naziv: 'DHT11', velicina_naziv: '', vrednost: 0, jedinica: '%', status: ''};
-      this.vetar = {id: 0, senzor_naziv: 'GY61', velicina_naziv: '', vrednost: 0, jedinica: 'm/s2', status: ''};
-      this.ucitajMerenja();
-
-      
+      this.merenje = [
+        {
+          id: 0,
+          senzor_naziv: "kada me prvi put pokrenes",
+          velicina_naziv: "Cekam sveze podatke",
+          vrednost: 0,
+          jedinica: "",
+          status: "ON",
+        }
+      ]
+      this.ucitajMerenja(); 
     }
 
     ucitajMerenja(): void {
-    this.merenjaService.getMerenjaTrenutne().subscribe({
+    this.serviceRealTime.getArduinoData().subscribe({
       next: (data) => {
-        console.log(data);
+        
         this.merenje = data;
-
-        this.merenje.forEach(m => {
-          if(m.senzor_naziv === 'LM35'){
-            this.temp = m;
-          }
-          else{
-            this.temp = {id: 0, senzor_naziv: 'LM35', velicina_naziv: '', vrednost: 0, jedinica: '°C', status: ''};
-          }
-          if(m.senzor_naziv === 'DHT11'){
-            this.vlaznost = m;
-          }
-          else{
-            this.vlaznost = {id: 0, senzor_naziv: 'DHT11', velicina_naziv: '', vrednost: 0, jedinica: '%', status: ''};
-          }
-          if(m.senzor_naziv === 'GY61'){
-            this.vetar = m;
-          }
-          else{
-            this.vetar = {id: 0, senzor_naziv: 'GY61', velicina_naziv: '', vrednost: 0, jedinica: 'm/s2', status: ''};
-          }
-        });
+        
+        
       },
       error: (err) => {
         console.error('Greška pri učitavanju senzora:', err);
