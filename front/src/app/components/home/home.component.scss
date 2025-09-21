@@ -13,17 +13,27 @@
 }
 
 .box {
-  display: flex;
+  display: block;
   align-items: center;
   justify-content: center;
   color: white;
   font-size: 20px;
   border-radius: 16px;
+  padding: 20px;
+
+  span{
+    font-size: 25px;
+    font-weight: bold;
+    
+  }
 }
 
-.box1 { background-color: #D9E9CF; } 
-.box2 { background-color: #A1C2BD; } 
-.box3 { background-color: #708993; } 
+.box1 { background-color: #D9E9CF;
+  color: #19183B;}
+.box2 { background-color: #A1C2BD; 
+color: #19183B;} 
+.box3 { background-color: #708993; 
+color: #19183B;} 
 .box4 {  height: 150px; } 
 
 ::ng-deep .card {

@@ -1,13 +1,15 @@
 <div class="grid-container">
-  <div class="box box1">Box 1</div>
-  <div class="box box2">Box 2</div>
-  <div class="box box3">Box 3</div>
-  <div class="box box4">
-    <img *ngIf="currentWeather === 'sun'" src="assets/SUN.png" alt="Sun">
-    <img *ngIf="currentWeather === 'cloud'" src="assets/CLOUD.png" alt="Cloud">
-    <img *ngIf="currentWeather === 'storm'" src="assets/STORM.png" alt="Storm">
-    <img *ngIf="currentWeather === 'uv'" src="assets/UV.png" alt="UV">
-    <img *ngIf="currentWeather === 'wind'" src="assets/WIND.png" alt="Wind">
+  <div class="box box1">
+    <div><p>Tremperatura</p></div><br>
+    <div><span>{{temp.vrednost}} {{temp.jedinica}}</span></div>
+  </div>
+  <div class="box box2">
+    <div><p>Vlažnost</p></div><br>
+    <div><span>{{vlaznost.vrednost}} {{vlaznost.jedinica}}</span></div>
+  </div>
+  <div class="box box3">
+    <div><p>Vetar</p></div><br>
+    <div><span>{{vetar.vrednost}} {{vetar.jedinica}}</span></div>
   </div>
 </div>
 
@@ -16,7 +18,7 @@
         #dt2
         [value]="merenje" 
         styleClass="p-datatable-striped" 
-        [globalFilterFields]="['velicina.name', 'senzor.name', 'senzor.status', 'vrednost']"
+        [globalFilterFields]="['velicina_naziv', 'senzor_naziv', 'vrednost', 'status']"
         sortMode="multiple"
         [tableStyle]="{'min-width': '50rem'}">
 
@@ -36,20 +38,16 @@
     </ng-template>
             <ng-template pTemplate="header">
                 <tr class="custom-header">
-                    <th pSortableColumn="velicina.name" >Meteo velicina <p-sortIcon field="velicina.name" /></th>
-                    <th pSortableColumn="senzor.name">Senzor <p-sortIcon field="velicina.name" /></th>
-                    <th pSortableColumn="senzor.status">Status <p-sortIcon field="senzor.status" /></th>
+                    <th pSortableColumn="velicina_naziv" >Meteo velicina <p-sortIcon field="velicina_naziv" /></th>
+                    <th pSortableColumn="senzor_naziv">Senzor <p-sortIcon field="senzor_naziv" /></th>
                     <th pSortableColumn="vrednost">Vrednost <p-sortIcon field="vrednost" /></th>
                 </tr>
             </ng-template>
             <ng-template pTemplate="body" let-m>
                 <tr>
-                    <td>{{m.velicina.name}}</td>
-                    <td>{{m.senzor.name}}</td>
-                    <td [style.color]="m.senzor.status === 'On' ? 'green' : 'red'">
-                        {{m.senzor.status}}
-                    </td>
-                    <td>{{m.vrednost}} {{m.velicina.jedinica}}</td>
+                    <td>{{m.velicina_naziv}}</td>
+                    <td>{{m.senzor_naziv}}</td>
+                    <td>{{m.vrednost}} {{m.jedinica}}</td>
                 </tr>
             </ng-template>
     </p-table>

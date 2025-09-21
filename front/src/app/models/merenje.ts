@@ -1,10 +1,24 @@
-import { Senzor } from "./senzor";
-import { Velicina } from "./velicina";
+
 
 export interface Merenje{
     id: Number,
-    senzor: Senzor,
-    velicina: Velicina,
+    senzor_naziv: string,
+    velicina_naziv: string,
     vrednost: Number,
-    date: string,
+    jedinica: string,
+    timestamp: string,
+}
+
+export interface MerenjeNajnovije{
+    id: Number,
+    senzor_naziv: string,
+    velicina_naziv: string,
+    vrednost: Number,
+    jedinica: string,
+    status: string,
+}
+
+export interface MerenjeRazlika{
+    senzor: String,
+    values: [Number, Number],
 }

@@ -54,4 +54,13 @@ router.put('/iskljuci', (req, res) => {
   });
 });
 
+//Svi senzori
+router.get('/', (req, res) => {
+  db.all(`SELECT id, naziv, status
+          FROM Senzor`, [], (err, rows) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json(rows);
+  });
+});
+
 module.exports = router;
