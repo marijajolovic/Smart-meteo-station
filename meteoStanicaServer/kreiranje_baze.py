@@ -34,11 +34,27 @@ CREATE TABLE IF NOT EXISTS Merenja (
 """)
 
 # 3) Ubacivanje test podataka
-c.execute("INSERT INTO Senzor (status, naziv) VALUES (?, ?)", ("ON", "Temperaturni senzor"))
-c.execute("INSERT INTO Senzor (status, naziv) VALUES (?, ?)", ("OFF", "Vlažnost vazduha"))
+senzori = [
+    ("ON", "Water level sensor"),
+    ("ON", "DHT11"),
+    ("ON", "TMP36"),
+    ("ON", "BMP180"),
+    ("ON", "LDR"),
+    ("ON", "GY61")
+]
+c.executemany("INSERT INTO Senzor (status, naziv) VALUES (?, ?)", senzori)
 
-c.execute("INSERT INTO Velicina (jedinica, naziv) VALUES (?, ?)", ("°C", "Temperatura"))
-c.execute("INSERT INTO Velicina (jedinica, naziv) VALUES (?, ?)", ("%", "Vlažnost"))
+
+# Ubaci veličine
+velicine = [
+    ("cm", "Nivo vode"),
+    ("%", "Vlaznost"),
+    ("°C", "Temperatura"),
+    ("mbar", "Pritisak"),
+    ("bin", "Svetlost"),   # 1 = Dan, 0 = Noć
+    ("m/s²", "Ubrzanje")
+]
+c.executemany("INSERT INTO Velicina (jedinica, naziv) VALUES (?, ?)", velicine)
 
 # 4) Povezivanje senzora i veličina sa vrednostima
 c.execute("INSERT INTO Merenja (senzor_id, velicina_id, vrednost) VALUES (?, ?, ?)", (1, 1, 23.5))
